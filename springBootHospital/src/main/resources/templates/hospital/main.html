@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Main</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+          crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {box-sizing: border-box;}
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header {
+            overflow: hidden;
+            background-color: #f1f1f1;
+            padding: 20px 10px;
+        }
+
+        .header a {
+            float: left;
+            color: black;
+            text-align: center;
+            padding: 12px;
+            text-decoration: none;
+            font-size: 18px;
+            line-height: 25px;
+            border-radius: 4px;
+        }
+
+        .header a.logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .header a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .header a.active {
+            background-color: dodgerblue;
+            color: white;
+        }
+
+        .header-right {
+            float: right;
+        }
+
+        @media screen and (max-width: 500px) {
+            .header a {
+                float: none;
+                display: block;
+                text-align: left;
+            }
+
+            .header-right {
+                float: none;
+            }
+        }
+
+    /*    search   */
+        .form button {
+            border: none;
+            background: none;
+            color: #8b8ba7;
+        }
+        /* styling of whole input container */
+        .form {
+            --timing: 0.3s;
+            --width-of-input: 200px;
+            --height-of-input: 40px;
+            --border-height: 2px;
+            --input-bg: #fff;
+            --border-color: #2f2ee9;
+            --border-radius: 30px;
+            --after-border-radius: 1px;
+            position: relative;
+            width: var(--width-of-input);
+            height: var(--height-of-input);
+            display: flex;
+            align-items: center;
+            padding-inline: 0.8em;
+            border-radius: var(--border-radius);
+            transition: border-radius 0.5s ease;
+            background: var(--input-bg,#fff);
+        }
+        /* styling of Input */
+        .input {
+            font-size: 0.9rem;
+            background-color: transparent;
+            width: 100%;
+            height: 100%;
+            padding-inline: 0.5em;
+            padding-block: 0.7em;
+            border: none;
+        }
+        /* styling of animated border */
+        .form:before {
+            content: "";
+            position: absolute;
+            background: var(--border-color);
+            transform: scaleX(0);
+            transform-origin: center;
+            width: 100%;
+            height: var(--border-height);
+            left: 0;
+            bottom: 0;
+            border-radius: 1px;
+            transition: transform var(--timing) ease;
+        }
+        /* Hover on Input */
+        .form:focus-within {
+            border-radius: var(--after-border-radius);
+        }
+
+        input:focus {
+            outline: none;
+        }
+        /* here is code of animated border */
+        .form:focus-within:before {
+            transform: scale(1);
+        }
+        /* styling of close button */
+        /* == you can click the close button to remove text == */
+        .reset {
+            border: none;
+            background: none;
+            opacity: 0;
+            visibility: hidden;
+        }
+        /* close button shown when typing */
+        input:not(:placeholder-shown) ~ .reset {
+            opacity: 1;
+            visibility: visible;
+        }
+        /* sizing svg icons */
+        .form svg {
+            width: 17px;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <a th:href="@{/hospitals}">
+        <a class="logo" th:href="@{/hospitals}">Peaksoft</a>
+    </a>
+    <form class="form" style="margin-left: 500px">
+        <button>
+            <svg width="17" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="search">
+                <path d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9" stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+        </button>
+        <input class="input" placeholder="Search.." name="keyWord" type="text" th:value="${keyWord}" >
+        <button class="reset" type="submit">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </form>
+    <div class="header-right" >
+        <input class="header-right" type="button" value="logout" onclick="window.location.href='/logout'">
+        <a class="active" th:href="@{/hospitals/new}" >Add new hospital</a>
+    </div>
+</div>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    <div style="text-align:center;" th:each="hospital : ${hospitals}">
+        <div class="col">
+            <div class="card">
+                <img th:src="*{hospital.getImage()}" class="card-img-top" alt="Hospital's image" src="">
+                <div class="card-body">
+                    <a th:href="@{/hospitals/{id}(id=${hospital.getId()})}">
+                        <h5 class="card-title" th:text="${hospital.getName()}"></h5>
+                    </a>
+                    <p class="card-text" th:text="${hospital.getAddress()}"></p>
+                    <br>
+
+                    <div style="display:flex; justify-content: space-between;">
+                        <a th:href="@{/hospitals/{id}/edit(id=${hospital.getId()})}">
+                            <input type="submit" class="btn btn-outline-primary" th:value="Update">
+                        </a>
+                        <form th:method="GET" th:action="@{/hospitals/{id}/delete(id=${hospital.getId()})}">
+                            <input type="submit" class="btn btn-outline-primary" th:value="Delete">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<p style="text-align:center;">-->
+<!--    <a class="btn btn-outline-primary" role="button" href="/hospitals/new">Add new hospital</a>-->
+<!--</p>-->
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+</html>
